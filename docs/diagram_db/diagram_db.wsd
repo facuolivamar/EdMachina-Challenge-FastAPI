@@ -1,0 +1,74 @@
+@startuml
+
+!define PRIMARY_KEY(x) <b><color:blue>x</color></b>
+!define METHOD(x) <color:green>x</color>
+
+entity Personas {
+    + PRIMARY_KEY(id): int
+    --
+    nombre_persona: str
+    apellido_persona: str
+    email_persona: str
+    numero_dni_persona: int
+    anio_nacimiento_persona: int
+    --
+    --
+    METHOD(get_personas())
+    METHOD(get_persona())
+    METHOD(set_persona())
+    METHOD(put_persona())
+    METHOD(del_persona())
+}
+
+entity Materias {
+    + PRIMARY_KEY(id): int
+    --
+    nombre_materia: str
+    anio_materia: int
+    --
+    FOREIGN_KEY(Carreras)
+    --
+    METHOD(get_materias())
+    METHOD(get_materia())
+    METHOD(set_materia())
+    METHOD(put_materia())
+    METHOD(del_materia())   
+}
+
+entity Registros {
+    + PRIMARY_KEY(id): int
+    --
+    calificacion_final: float
+    fecha_inicio_cursado: date
+    fecha_fin_cursado: date
+    activo: bool
+    --
+    FOREIGN_KEY(Personas)
+    FOREIGN_KEY(Materias)
+    --
+    METHOD(get_Registros())
+    METHOD(get_Registros_detalle())
+    METHOD(get_Registro())
+    METHOD(set_Registro())
+    METHOD(put_Registro())
+    METHOD(del_Registro())
+}
+
+entity Carreras {
+    + PRIMARY_KEY(id): int
+    --
+    nombre_carrera: str
+    --
+    METHOD(get_Carreras())
+    METHOD(get_Carrera())
+    METHOD(set_Carrera())
+    METHOD(put_Carrera())
+    METHOD(del_Carrera())
+}
+
+Carreras "1" - "*" Materias
+Materias "1" - "*" Registros
+Registros "*" - "1" Personas
+
+
+@enduml
