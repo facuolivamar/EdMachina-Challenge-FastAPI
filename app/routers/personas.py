@@ -46,4 +46,18 @@ async def create_persona(db: db_dependency, persona_request: PersonaRequest):
     db.add(persona_model)
     db.commit()
 
+@router.put("/{persona_id}", status_code=status.HTTP_204_NO_CONTENT)
+async def update_persona(db: db_dependency, persona_request: PersonaRequest, persona_id: int = Path(gt=0)):
+    persona_model = db.query(Personas).filter(Personas.id == persona_id).first()
+    if persona_model is None:
+        raise HTTPException(status_code=404, detail='Persona not found.')
 
+    persona_model.nombre_persona = persona_request.nombre_persona
+    persona_model.apellido_persona = persona_request.apellido_persona
+    persona_model.email_persona = persona_request.email_persona 
+    persona_model.numero_dni_persona = persona_request.numero_dni_persona 
+    persona_model.anio_nacimiento_persona = persona_request.anio_nacimiento_persona 
+
+
+    db.add(persona_model)
+    db.commit()
