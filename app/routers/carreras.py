@@ -11,6 +11,7 @@ router = APIRouter(
     tags=['carrera']
 )
 
+
 def get_db():
     db = SessionLocal()
     try:
@@ -21,8 +22,10 @@ def get_db():
 
 db_dependency = Annotated[Session, Depends(get_db)]
 
+
 class CarreraRequest(BaseModel):
     nombre_carrera: str = Field(min_length=3)
+
 
 @router.get("", status_code=status.HTTP_200_OK)
 async def read_all(db: db_dependency):
@@ -45,8 +48,11 @@ async def create_carrera(db: db_dependency, carrera_request: CarreraRequest):
     db.add(carrera_model)
     db.commit()
 
+
 @router.put("/{carrera_id}", status_code=status.HTTP_204_NO_CONTENT)
-async def update_carrera(db: db_dependency, carrera_request: CarreraRequest, carrera_id: int = Path(gt=0)):
+async def update_carrera(db: db_dependency,
+                         carrera_request: CarreraRequest,
+                         carrera_id: int = Path(gt=0)):
     carrera_model = db.query(Carreras).filter(Carreras.id == carrera_id).first()
     if carrera_model is None:
         raise HTTPException(status_code=404, detail='Carrera not found.')
@@ -56,13 +62,13 @@ async def update_carrera(db: db_dependency, carrera_request: CarreraRequest, car
     db.add(carrera_model)
     db.commit()
 
+
 @router.delete("/{carrera_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_carrera(db: db_dependency, carrera_id: int = Path(gt=0)):
     carrera_model = db.query(Carreras).filter(Carreras.id == carrera_id).first()
     if carrera_model is None:
-        raise HTTPException(status_code=404, detail='Todo not found.')
+        raise HTTPException(status_code=404, detail='Carrera not found.')
 
     db.delete(carrera_model)
 
     db.commit()
-

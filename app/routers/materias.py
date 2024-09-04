@@ -11,19 +11,23 @@ router = APIRouter(
     tags=['materia']
 )
 
+
 def get_db():
     db = SessionLocal()
     try:
         yield db
     finally:
         db.close()
-        
+
+
 db_dependency = Annotated[Session, Depends(get_db)]
+
 
 class MateriaRequest(BaseModel):
     nombre_materia: str = Field(min_length=1)
     anio_materia: int = Field(gt=0)
     carrera_id: int = Field(gt=0)
+
 
 @router.get("", status_code=status.HTTP_200_OK)
 async def read_all(db: db_dependency):
@@ -47,7 +51,9 @@ async def create_materia(db: db_dependency, materia_request: MateriaRequest):
 
 
 @router.put("/{materia_id}", status_code=status.HTTP_204_NO_CONTENT)
-async def update_materia(db: db_dependency, materia_request: MateriaRequest, materia_id: int = Path(gt=0)):
+async def update_materia(db: db_dependency,
+                         materia_request: MateriaRequest,
+                         materia_id: int = Path(gt=0)):
     materia_model = db.query(Materias).filter(Materias.id == materia_id).first()
     if materia_model is None:
         raise HTTPException(status_code=404, detail='Materia not found.')
@@ -55,7 +61,6 @@ async def update_materia(db: db_dependency, materia_request: MateriaRequest, mat
     materia_model.nombre_materia = materia_request.nombre_materia
     materia_model.anio_materia = materia_request.anio_materia
     materia_model.carrera_id = materia_request.carrera_id
-
 
     db.add(materia_model)
     db.commit()
@@ -70,4 +75,3 @@ async def delete_materia(db: db_dependency, materia_id: int = Path(gt=0)):
     db.delete(materia_model)
 
     db.commit()
-
