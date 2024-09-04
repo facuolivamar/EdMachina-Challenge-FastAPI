@@ -61,3 +61,14 @@ async def update_persona(db: db_dependency, persona_request: PersonaRequest, per
 
     db.add(persona_model)
     db.commit()
+
+@router.delete("/{persona_id}", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_persona(db: db_dependency, persona_id: int = Path(gt=0)):
+    persona_model = db.query(Personas).filter(Personas.id == persona_id).first()
+    if persona_model is None:
+        raise HTTPException(status_code=404, detail='Todo not found.')
+
+    db.delete(persona_model)
+
+    db.commit()
+
