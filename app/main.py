@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from .models import Base
 from .database import engine
-from .routers import carreras
+from .routers import carreras, personas
 
 app = FastAPI()
 
@@ -12,3 +12,4 @@ def health_check():
     return {'status': 'Healthy'}
 
 app.include_router(carreras.router)
+app.include_router(personas.router)
