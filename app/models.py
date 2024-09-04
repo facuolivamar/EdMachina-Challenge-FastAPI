@@ -25,3 +25,15 @@ class Materias(Base):
     nombre_materia = Column(String(length=255))
     anio_materia= Column(Integer)
     carrera_id = Column(Integer, ForeignKey("carreras.id"))
+
+class Registros(Base):
+    __tablename__ = 'registros'
+
+    id = Column(Integer, primary_key=True, index=True)
+    calificacion_final = Column(Float)
+    fecha_inicio_cursado = Column(Date)
+    fecha_fin_cursado = Column(Date, default=None)
+    activo = Column(Boolean, default=True)
+
+    materia_id = Column(Integer, ForeignKey("materias.id"))
+    persona_id = Column(Integer, ForeignKey("personas.id"))
