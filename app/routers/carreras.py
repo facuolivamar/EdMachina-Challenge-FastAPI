@@ -24,7 +24,7 @@ db_dependency = Annotated[Session, Depends(get_db)]
 
 
 class CarreraRequest(BaseModel):
-    nombre_carrera: str = Field(min_length=3)
+    nombre_carrera: str = Field(min_length=1, description="Este es el nombre de la Carrera")
 
 
 @router.get("", status_code=status.HTTP_200_OK)

@@ -24,9 +24,9 @@ db_dependency = Annotated[Session, Depends(get_db)]
 
 
 class MateriaRequest(BaseModel):
-    nombre_materia: str = Field(min_length=1)
-    anio_materia: int = Field(gt=0)
-    carrera_id: int = Field(gt=0)
+    nombre_materia: str = Field(min_length=1, description="Este es el nombre de la Materia")
+    anio_materia: int = Field(gt=0, description="Este es el año de cursado de la Materia, ejemplo: 5 para 5to año.")
+    carrera_id: int = Field(gt=0, description="Carrera relacionada a la Materia")
 
 
 @router.get("", status_code=status.HTTP_200_OK)

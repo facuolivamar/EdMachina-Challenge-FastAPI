@@ -25,11 +25,11 @@ db_dependency = Annotated[Session, Depends(get_db)]
 
 
 class PersonaRequest(BaseModel):
-    nombre_persona: str = Field(min_length=1)
-    apellido_persona: str = Field(min_length=1)
-    email_persona: str = Field(min_length=3)
-    numero_dni_persona: int = Field(gt=0)
-    anio_nacimiento_persona: date
+    nombre_persona: str = Field(min_length=1, description="nombre de la Persona")
+    apellido_persona: str = Field(min_length=1, description="apellido de la Persona")
+    email_persona: str = Field(min_length=3, description="email de la Persona")
+    numero_dni_persona: int = Field(gt=0, description="numero de DNI de la Persona")
+    anio_nacimiento_persona: date = Field(description="Fecha de Nacimiento de la Persona")
 
 
 @router.get("", status_code=status.HTTP_200_OK)

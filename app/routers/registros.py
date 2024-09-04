@@ -25,12 +25,12 @@ db_dependency = Annotated[Session, Depends(get_db)]
 
 
 class RegistroRequest(BaseModel):
-    calificacion_final: float = Field(gt=0, le=10)
-    fecha_inicio_cursado: date
-    fecha_fin_cursado: date
-    activo: bool
-    persona_id: int
-    materia_id: int
+    calificacion_final: float = Field(gt=0, le=10, description="Calificacion final del Alumno")
+    fecha_inicio_cursado: date = Field(description="Fecha de Inicio de Cursado de la Materia")
+    fecha_fin_cursado: date | None = Field(description="Fecha de finalizacion del Cursado de la Materia")
+    activo: bool | None = Field(description="Este es el estado del Alumno")
+    persona_id: int = Field(gt=0, description="Persona relacionada al Registro")
+    materia_id: int = Field(gt=0, description="Materia relacionada al Registro")
 
 
 @router.get("", status_code=status.HTTP_200_OK)
