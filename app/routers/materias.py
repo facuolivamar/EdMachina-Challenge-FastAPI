@@ -30,4 +30,10 @@ async def read_all(db: db_dependency):
     return db.query(Materias).all()
 
 
+@router.get("/{materia_id}", status_code=status.HTTP_200_OK)
+async def read_materia(db: db_dependency, materia_id: int = Path(gt=0)):
+    materia_model = db.query(Materias).filter(Materias.id == materia_id).first()
+    if materia_model is not None:
+        return materia_model
+    raise HTTPException(status_code=404, detail='Materia not found.')
 
