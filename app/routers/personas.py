@@ -39,3 +39,11 @@ async def read_persona(db: db_dependency, persona_id: int = Path(gt=0)):
         return persona_model
     raise HTTPException(status_code=404, detail='Persona not found.')
 
+@router.post("", status_code=status.HTTP_201_CREATED)
+async def create_persona(db: db_dependency, persona_request: PersonaRequest):
+    persona_model = Personas(**persona_request.model_dump())
+
+    db.add(persona_model)
+    db.commit()
+
+
