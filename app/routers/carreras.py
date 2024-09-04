@@ -35,3 +35,12 @@ async def read_carrera(db: db_dependency, carrera_id: int = Path(gt=0)):
     if carrera_model is not None:
         return carrera_model
     raise HTTPException(status_code=404, detail='Carrera not found.')
+
+
+@router.post("", status_code=status.HTTP_201_CREATED)
+async def create_carrera(db: db_dependency, carrera_request: CarreraRequest):
+
+    carrera_model = Carreras(**carrera_request.model_dump())
+
+    db.add(carrera_model)
+    db.commit()
