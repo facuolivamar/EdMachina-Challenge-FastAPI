@@ -31,3 +31,11 @@ class PersonaRequest(BaseModel):
 @router.get("", status_code=status.HTTP_200_OK)
 async def read_all(db: db_dependency):
     return db.query(Personas).all()
+
+@router.get("/{persona_id}", status_code=status.HTTP_200_OK)
+async def read_persona(db: db_dependency, persona_id: int = Path(gt=0)):
+    persona_model = db.query(Personas).filter(Personas.id == persona_id).first()
+    if persona_model is not None:
+        return persona_model
+    raise HTTPException(status_code=404, detail='Persona not found.')
+
