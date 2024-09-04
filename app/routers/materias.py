@@ -37,3 +37,11 @@ async def read_materia(db: db_dependency, materia_id: int = Path(gt=0)):
         return materia_model
     raise HTTPException(status_code=404, detail='Materia not found.')
 
+
+@router.post("", status_code=status.HTTP_201_CREATED)
+async def create_materia(db: db_dependency, materia_request: MateriaRequest):
+    materia_model = Materias(**materia_request.model_dump())
+
+    db.add(materia_model)
+    db.commit()
+
