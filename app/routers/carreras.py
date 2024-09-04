@@ -55,3 +55,14 @@ async def update_carrera(db: db_dependency, carrera_request: CarreraRequest, car
 
     db.add(carrera_model)
     db.commit()
+
+@router.delete("/{carrera_id}", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_carrera(db: db_dependency, carrera_id: int = Path(gt=0)):
+    carrera_model = db.query(Carreras).filter(Carreras.id == carrera_id).first()
+    if carrera_model is None:
+        raise HTTPException(status_code=404, detail='Todo not found.')
+
+    db.delete(carrera_model)
+
+    db.commit()
+
