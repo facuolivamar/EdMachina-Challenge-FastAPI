@@ -4,7 +4,8 @@ from starlette import status
 from ..database import SessionLocal
 from typing import Annotated
 from sqlalchemy.orm import Session
-from ..models import Registros
+from sqlalchemy.exc import IntegrityError, SQLAlchemyError
+from ..models import Registros, Materias, Personas
 from datetime import date
 
 router = APIRouter(
@@ -53,8 +54,27 @@ async def create_registro(db: db_dependency,
                           registro_request: RegistroRequest):
     registro_model = Registros(**registro_request.model_dump())
 
-    db.add(registro_model)
-    db.commit()
+
+    try:
+        db.add(registro_model)
+        db.commit()
+        return registro_model
+    except IntegrityError as e:
+        db.rollback()
+        
+        materia_id = db.query(Materias).filter(Materias.id == registro_model.materia_id).first()
+        if materia_id is None:
+            raise HTTPException(status_code=422, detail='materia_id does not exist.')
+
+        persona_id = db.query(Personas).filter(Personas.id == registro_model.persona_id).first()
+        if persona_id is None:
+            raise HTTPException(status_code=422, detail='persona_id does not exist.')
+
+        raise HTTPException(status_code=422, detail="IntegrityError")
+
+    except SQLAlchemyError:
+        db.rollback()
+        raise HTTPException(status_code=500, detail="Internal Server Error")
 
 
 @router.put("/{registro_id}", status_code=status.HTTP_204_NO_CONTENT)
@@ -74,8 +94,26 @@ async def update_registro(db: db_dependency,
     registro_model.persona_id = registro_request.persona_id
     registro_model.materia_id = registro_request.materia_id
 
-    db.add(registro_model)
-    db.commit()
+    try:
+        db.add(registro_model)
+        db.commit()
+        return registro_model
+    except IntegrityError as e:
+        db.rollback()
+        
+        materia_id = db.query(Materias).filter(Materias.id == registro_request.materia_id).first()
+        if materia_id is None:
+            raise HTTPException(status_code=422, detail='materia_id does not exist.')
+
+        persona_id = db.query(Personas).filter(Personas.id == registro_request.persona_id).first()
+        if persona_id is None:
+            raise HTTPException(status_code=422, detail='persona_id does not exist.')
+
+        raise HTTPException(status_code=422, detail="IntegrityError")
+
+    except SQLAlchemyError:
+        db.rollback()
+        raise HTTPException(status_code=500, detail="Internal Server Error")
 
 
 @router.delete("/{registro_id}", status_code=status.HTTP_204_NO_CONTENT)
