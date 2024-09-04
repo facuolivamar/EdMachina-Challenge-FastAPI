@@ -10,7 +10,6 @@ SQLALCHEMY_DATABASE_URL = os.environ.get(
     "SQLALCHEMY_DATABASE_URL",
     "sqlite:///./app/leadsapp.db")
 
-print("DATABASE_URL:", SQLALCHEMY_DATABASE_URL)
 
 try:
     engine = create_engine(SQLALCHEMY_DATABASE_URL)
