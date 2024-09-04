@@ -33,3 +33,10 @@ class RegistroRequest(BaseModel):
 async def read_all(db: db_dependency):
     return db.query(Registros).all()
 
+@router.get("/{registro_id}", status_code=status.HTTP_200_OK)
+async def read_registro(db: db_dependency, registro_id: int = Path(gt=0)):
+    registro_model = db.query(Registros).filter(Registros.id == registro_id).first()
+    if registro_model is not None:
+        return registro_model
+    raise HTTPException(status_code=404, detail='Registro not found.')
+
