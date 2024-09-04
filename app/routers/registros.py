@@ -40,3 +40,9 @@ async def read_registro(db: db_dependency, registro_id: int = Path(gt=0)):
         return registro_model
     raise HTTPException(status_code=404, detail='Registro not found.')
 
+@router.post("", status_code=status.HTTP_201_CREATED)
+async def create_registro(db: db_dependency, registro_request: RegistroRequest):
+    registro_model = Registros(**registro_request.model_dump())
+
+    db.add(registro_model)
+    db.commit()
