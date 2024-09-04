@@ -4,7 +4,8 @@ from starlette import status
 from ..database import SessionLocal
 from typing import Annotated
 from sqlalchemy.orm import Session
-from ..models import Materias
+from sqlalchemy.exc import IntegrityError, SQLAlchemyError
+from ..models import Materias, Carreras
 
 router = APIRouter(
     prefix='/materia',
@@ -46,8 +47,23 @@ async def read_materia(db: db_dependency, materia_id: int = Path(gt=0)):
 async def create_materia(db: db_dependency, materia_request: MateriaRequest):
     materia_model = Materias(**materia_request.model_dump())
 
-    db.add(materia_model)
-    db.commit()
+    try:
+        db.add(materia_model)
+        db.commit()
+        return materia_model
+    except IntegrityError as e:
+        db.rollback()
+        
+        carrera_id = db.query(Carreras).filter(id == materia_model.carrera_id).first()
+        if carrera_id is None:
+            raise HTTPException(status_code=422, detail='carrera_id does not exist.')
+
+        raise HTTPException(status_code=422, detail="IntegrityError")
+
+    except SQLAlchemyError:
+        db.rollback()
+        raise HTTPException(status_code=500, detail="Internal Server Error")
+        
 
 
 @router.put("/{materia_id}", status_code=status.HTTP_204_NO_CONTENT)
@@ -62,8 +78,22 @@ async def update_materia(db: db_dependency,
     materia_model.anio_materia = materia_request.anio_materia
     materia_model.carrera_id = materia_request.carrera_id
 
-    db.add(materia_model)
-    db.commit()
+    try:
+        db.add(materia_model)
+        db.commit()
+        return materia_model
+    except IntegrityError as e:
+        db.rollback()
+        
+        carrera_id = db.query(Carreras).filter(id == materia_model.carrera_id).first()
+        if carrera_id is None:
+            raise HTTPException(status_code=422, detail='carrera_id does not exist.')
+
+        raise HTTPException(status_code=422, detail="IntegrityError")
+
+    except SQLAlchemyError:
+        db.rollback()
+        raise HTTPException(status_code=500, detail="Internal Server Error")
 
 
 @router.delete("/{materia_id}", status_code=status.HTTP_204_NO_CONTENT)
