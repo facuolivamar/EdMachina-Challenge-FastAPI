@@ -6,13 +6,20 @@ from sqlalchemy.ext.declarative import declarative_base
 
 load_dotenv()
 
-SQLALCHEMY_DATABASE_URL = os.getenv('DATABASE_URL')
+SQLALCHEMY_DATABASE_URL = os.environ.get(
+    "SQLALCHEMY_DATABASE_URL",
+    "sqlite:///./app/leadsapp.db")
 
 print("DATABASE_URL:", SQLALCHEMY_DATABASE_URL)
 
-engine = create_engine(SQLALCHEMY_DATABASE_URL,
-                       connect_args={'check_same_thread': False})
+try:
+    engine = create_engine(SQLALCHEMY_DATABASE_URL)
 
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+    SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
-Base = declarative_base()
+    Base = declarative_base()
+
+except UnicodeDecodeError as e:
+    print(f"UnicodeDecodeError: {e}")
+except Exception as e:
+    print(f"Error: {e}")
