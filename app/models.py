@@ -17,3 +17,11 @@ class Personas(Base):
     email_persona = Column(String, unique=True) 
     numero_dni_persona = Column(Integer)
     anio_nacimiento_persona = Column(Date)
+
+class Materias(Base):
+    __tablename__ = 'materias'
+
+    id = Column(Integer, primary_key=True, index=True)
+    nombre_materia = Column(String(length=255))
+    anio_materia= Column(Integer)
+    carrera_id = Column(Integer, ForeignKey("carreras.id"))
