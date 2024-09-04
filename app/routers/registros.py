@@ -62,3 +62,14 @@ async def update_registro(db: db_dependency, registro_request: RegistroRequest, 
 
     db.add(registro_model)
     db.commit()
+
+@router.delete("/{registro_id}", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_registro(db: db_dependency, registro_id: int = Path(gt=0)):
+    registro_model = db.query(Registros).filter(Registros.id == registro_id).first()
+    if registro_model is None:
+        raise HTTPException(status_code=404, detail='Registro not found.')
+
+    db.delete(registro_model)
+
+    db.commit()
+
