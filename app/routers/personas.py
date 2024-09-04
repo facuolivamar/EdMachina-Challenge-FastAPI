@@ -4,6 +4,7 @@ from starlette import status
 from ..database import SessionLocal
 from typing import Annotated
 from sqlalchemy.orm import Session
+from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 from ..models import Personas
 from datetime import date
 
@@ -48,9 +49,27 @@ async def read_persona(db: db_dependency, persona_id: int = Path(gt=0)):
 @router.post("", status_code=status.HTTP_201_CREATED)
 async def create_persona(db: db_dependency, persona_request: PersonaRequest):
     persona_model = Personas(**persona_request.model_dump())
+    
+    try:
+        db.add(persona_model)
+        db.commit()
+        return persona_model
+    except IntegrityError as e:
+        db.rollback()
+        
+        email_personas = db.query(Personas).filter(Personas.email_persona == persona_model.email_persona).first()
+        if email_personas is not None:
+            raise HTTPException(status_code=422, detail='email already exists.')
+        
+        numero_dni_personas = db.query(Personas).filter(Personas.numero_dni_persona == persona_model.numero_dni_persona).first()
+        if numero_dni_personas is not None:
+            raise HTTPException(status_code=422, detail='numero_dni_persona already exists.')
 
-    db.add(persona_model)
-    db.commit()
+        raise HTTPException(status_code=422, detail="IntegrityError")
+
+    except SQLAlchemyError:
+        db.rollback()
+        raise HTTPException(status_code=500, detail="Internal Server Error")
 
 
 @router.put("/{persona_id}", status_code=status.HTTP_204_NO_CONTENT)
@@ -67,8 +86,27 @@ async def update_persona(db: db_dependency,
     persona_model.numero_dni_persona = persona_request.numero_dni_persona
     persona_model.anio_nacimiento_persona = persona_request.anio_nacimiento_persona
 
-    db.add(persona_model)
-    db.commit()
+    try:
+        db.add(persona_model)
+        db.commit()
+        return persona_model
+    except IntegrityError as e:
+        db.rollback()
+        
+        email_personas = db.query(Personas).filter(Personas.email_persona == persona_request.email_persona).first()
+        if email_personas is not None and email_personas.id != persona_id:
+            raise HTTPException(status_code=422, detail='email already exists.')
+        
+        numero_dni_personas = db.query(Personas).filter(Personas.numero_dni_persona == persona_model.numero_dni_persona).first()
+        if numero_dni_personas is not None and numero_dni_personas.id != persona_id:
+            raise HTTPException(status_code=422, detail='numero_dni_persona already exists.')
+
+        raise HTTPException(status_code=422, detail="IntegrityError")
+
+    except SQLAlchemyError:
+        db.rollback()
+        raise HTTPException(status_code=500, detail="Internal Server Error")
+
 
 
 @router.delete("/{persona_id}", status_code=status.HTTP_204_NO_CONTENT)
