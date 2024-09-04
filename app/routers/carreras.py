@@ -28,3 +28,10 @@ class CarreraRequest(BaseModel):
 async def read_all(db: db_dependency):
     return db.query(Carreras).all()
 
+
+@router.get("/{carrera_id}", status_code=status.HTTP_200_OK)
+async def read_carrera(db: db_dependency, carrera_id: int = Path(gt=0)):
+    carrera_model = db.query(Carreras).filter(Carreras.id == carrera_id).first()
+    if carrera_model is not None:
+        return carrera_model
+    raise HTTPException(status_code=404, detail='Carrera not found.')
