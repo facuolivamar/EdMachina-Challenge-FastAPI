@@ -59,3 +59,15 @@ async def update_materia(db: db_dependency, materia_request: MateriaRequest, mat
 
     db.add(materia_model)
     db.commit()
+
+
+@router.delete("/{materia_id}", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_materia(db: db_dependency, materia_id: int = Path(gt=0)):
+    materia_model = db.query(Materias).filter(Materias.id == materia_id).first()
+    if materia_model is None:
+        raise HTTPException(status_code=404, detail='Materia not found.')
+
+    db.delete(materia_model)
+
+    db.commit()
+
