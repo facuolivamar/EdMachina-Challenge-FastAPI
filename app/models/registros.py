@@ -2,6 +2,8 @@ from ..database import Base
 from sqlalchemy import Column, Integer, Boolean, ForeignKey, Float, Date
 from sqlalchemy.orm import relationship
 
+
+# Definición del modelo Registros que hereda de Base
 class Registros(Base):
     __tablename__ = 'registros'
 
@@ -17,8 +19,7 @@ class Registros(Base):
     persona_id = Column(Integer,
                         ForeignKey("personas.id", ondelete='CASCADE'),
                         nullable=False)
-    
-    
+
     # Relaciones
-    persona = relationship("Personas", backref="registros")
-    materia = relationship("Materias", backref="registros")
+    persona = relationship("Personas", backref="registros")  # Relación con el modelo Personas (una persona tiene muchos registros)
+    materia = relationship("Materias", backref="registros")  # Relación con el modelo Materias (una materia tiene muchos registros)
