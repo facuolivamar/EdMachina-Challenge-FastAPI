@@ -43,6 +43,8 @@ async def create_carrera(db: db_dependency, carrera_request: CarreraRequest):
 
     db.add(carrera_model)
     db.commit()
+    db.refresh(carrera_model)
+    return carrera_model
 
 
 @router.put("/{carrera_id}", status_code=status.HTTP_204_NO_CONTENT)

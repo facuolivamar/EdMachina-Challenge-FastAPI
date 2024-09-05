@@ -44,6 +44,7 @@ async def create_persona(db: db_dependency, persona_request: PersonaRequest):
     try:
         db.add(persona_model)
         db.commit()
+        db.refresh(persona_model)
         return persona_model
     except IntegrityError as e:
         db.rollback()
@@ -80,6 +81,9 @@ async def update_persona(db: db_dependency,
     persona_model.email_persona = persona_request.email_persona
     persona_model.numero_dni_persona = persona_request.numero_dni_persona
     persona_model.fecha_nacimiento_persona = persona_request.fecha_nacimiento_persona
+    persona_model.direccion_persona = persona_request.direccion_persona
+    persona_model.telefono_persona = persona_request.telefono_persona
+    persona_model.anio_inscripcion_persona = persona_request.anio_inscripcion_persona
 
     try:
         db.add(persona_model)

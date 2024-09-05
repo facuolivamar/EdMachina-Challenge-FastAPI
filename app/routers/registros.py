@@ -7,6 +7,7 @@ from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 from ..models.registros import Registros
 from ..models.materias import Materias
 from ..models.personas import Personas
+from ..models.carreras import Carreras
 from ..schemas.registros import RegistroRequest
 
 # Definimos un router para el manejo de las rutas relacionadas con los "registros"
@@ -56,7 +57,8 @@ async def read_registro_detalle(db: db_dependency, registro_id: int = Path(gt=0)
     # Utiliza joinedload para cargar relaciones de persona y materia en la misma consulta
     registro_model = db.query(Registros).options(
         joinedload(Registros.persona),
-        joinedload(Registros.materia)
+        joinedload(Registros.materia),
+        joinedload(Registros.carrera)
     ).filter(Registros.id == registro_id).first()
 
     # Si el registro no se encuentra, devuelve un error 404
@@ -78,6 +80,7 @@ async def create_registro(db: db_dependency,
         # Agrega el nuevo registro a la base de datos
         db.add(registro_model)
         db.commit()
+        db.refresh(registro_model)
         return registro_model
 
     except IntegrityError as e:
@@ -96,6 +99,13 @@ async def create_registro(db: db_dependency,
             ).first()
         if persona_id is None:
             raise HTTPException(status_code=422, detail='persona_id does not exist.')
+
+        # Verifica si el ID de la carrera existe
+        carrrera_id = db.query(Carreras).filter(
+            Carreras.id == registro_request.carrrera_id
+            ).first()
+        if carrrera_id is None:
+            raise HTTPException(status_code=422, detail='carrera_id does not exist.')
 
         raise HTTPException(status_code=422, detail="IntegrityError")
 
@@ -125,6 +135,7 @@ async def update_registro(db: db_dependency,
     registro_model.activo = registro_request.activo
     registro_model.persona_id = registro_request.persona_id
     registro_model.materia_id = registro_request.materia_id
+    registro_model.carrera_id = registro_request.carrera_id
 
     try:
         db.add(registro_model)
@@ -146,6 +157,12 @@ async def update_registro(db: db_dependency,
             ).first()
         if persona_id is None:
             raise HTTPException(status_code=422, detail='persona_id does not exist.')
+
+        carrrera_id = db.query(Carreras).filter(
+            Carreras.id == registro_request.carrrera_id
+            ).first()
+        if carrrera_id is None:
+            raise HTTPException(status_code=422, detail='carrera_id does not exist.')
 
         raise HTTPException(status_code=422, detail="IntegrityError")
 

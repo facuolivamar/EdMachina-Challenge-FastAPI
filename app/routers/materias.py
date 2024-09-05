@@ -5,7 +5,6 @@ from typing import Annotated
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 from ..models.materias import Materias
-from ..models.carreras import Carreras
 from ..schemas.materias import MateriaRequest
 
 router = APIRouter(
@@ -45,17 +44,8 @@ async def create_materia(db: db_dependency, materia_request: MateriaRequest):
     try:
         db.add(materia_model)
         db.commit()
+        db.refresh(materia_model)
         return materia_model
-    except IntegrityError as e:
-        db.rollback()
-
-        carrera_id = db.query(Carreras).filter(
-            id == materia_request.carrera_id
-            ).first()
-        if carrera_id is None:
-            raise HTTPException(status_code=422, detail='carrera_id does not exist.')
-
-        raise HTTPException(status_code=422, detail="IntegrityError")
 
     except SQLAlchemyError:
         db.rollback()
@@ -72,22 +62,11 @@ async def update_materia(db: db_dependency,
 
     materia_model.nombre_materia = materia_request.nombre_materia
     materia_model.anio_materia = materia_request.anio_materia
-    materia_model.carrera_id = materia_request.carrera_id
 
     try:
         db.add(materia_model)
         db.commit()
         return materia_model
-    except IntegrityError as e:
-        db.rollback()
-
-        carrera_id = db.query(Carreras).filter(
-            id == materia_request.carrera_id
-            ).first()
-        if carrera_id is None:
-            raise HTTPException(status_code=422, detail='carrera_id does not exist.')
-
-        raise HTTPException(status_code=422, detail="IntegrityError")
 
     except SQLAlchemyError:
         db.rollback()
