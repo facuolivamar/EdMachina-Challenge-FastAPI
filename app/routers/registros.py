@@ -2,7 +2,7 @@ from fastapi import APIRouter, Path, Depends, HTTPException
 from starlette import status
 from ..database import SessionLocal
 from typing import Annotated
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 from ..models.registros import Registros
 from ..models.materias import Materias
@@ -39,6 +39,19 @@ async def read_registro(db: db_dependency, registro_id: int = Path(gt=0)):
     if registro_model is not None:
         return registro_model
     raise HTTPException(status_code=404, detail='Registro not found.')
+
+
+@router.get("/detalle/{registro_id}", status_code=status.HTTP_200_OK)
+async def read_registro_detalle(db: db_dependency, registro_id: int = Path(gt=0)):
+    registro_model = db.query(Registros).options(
+        joinedload(Registros.persona), 
+        joinedload(Registros.materia)
+    ).filter(Registros.id == registro_id).first()
+
+    if registro_model is None:
+        raise HTTPException(status_code=404, detail='Registro not found.')
+
+    return registro_model
 
 
 @router.post("", status_code=status.HTTP_201_CREATED)
