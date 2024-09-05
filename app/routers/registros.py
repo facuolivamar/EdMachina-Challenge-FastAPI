@@ -29,7 +29,7 @@ class RegistroRequest(BaseModel):
     calificacion_final: float = Field(gt=0, le=10, description="Calificacion final del Alumno")
     fecha_inicio_cursado: date = Field(description="Fecha de Inicio de Cursado de la Materia")
     fecha_fin_cursado: date | None = Field(description="Fecha de finalizacion del Cursado de la Materia")
-    activo: bool | None = Field(description="Este es el estado del Alumno")
+    activo: bool | None = Field(description="Estado del Alumno")
     persona_id: int = Field(gt=0, description="Persona relacionada al Registro")
     materia_id: int = Field(gt=0, description="Materia relacionada al Registro")
 
@@ -54,19 +54,22 @@ async def create_registro(db: db_dependency,
                           registro_request: RegistroRequest):
     registro_model = Registros(**registro_request.model_dump())
 
-
     try:
         db.add(registro_model)
         db.commit()
         return registro_model
     except IntegrityError as e:
         db.rollback()
-        
-        materia_id = db.query(Materias).filter(Materias.id == registro_model.materia_id).first()
+
+        materia_id = db.query(Materias).filter(
+            Materias.id == registro_request.materia_id
+            ).first()
         if materia_id is None:
             raise HTTPException(status_code=422, detail='materia_id does not exist.')
 
-        persona_id = db.query(Personas).filter(Personas.id == registro_model.persona_id).first()
+        persona_id = db.query(Personas).filter(
+            Personas.id == registro_request.persona_id
+            ).first()
         if persona_id is None:
             raise HTTPException(status_code=422, detail='persona_id does not exist.')
 
@@ -82,7 +85,8 @@ async def update_registro(db: db_dependency,
                           registro_request: RegistroRequest,
                           registro_id: int = Path(gt=0)):
     registro_model = db.query(Registros).filter(
-        Registros.id == registro_id).first()
+        Registros.id == registro_id
+        ).first()
 
     if registro_model is None:
         raise HTTPException(status_code=404, detail='Registro not found.')
@@ -100,12 +104,16 @@ async def update_registro(db: db_dependency,
         return registro_model
     except IntegrityError as e:
         db.rollback()
-        
-        materia_id = db.query(Materias).filter(Materias.id == registro_request.materia_id).first()
+
+        materia_id = db.query(Materias).filter(
+            Materias.id == registro_request.materia_id
+            ).first()
         if materia_id is None:
             raise HTTPException(status_code=422, detail='materia_id does not exist.')
 
-        persona_id = db.query(Personas).filter(Personas.id == registro_request.persona_id).first()
+        persona_id = db.query(Personas).filter(
+            Personas.id == registro_request.persona_id
+            ).first()
         if persona_id is None:
             raise HTTPException(status_code=422, detail='persona_id does not exist.')
 
@@ -119,7 +127,8 @@ async def update_registro(db: db_dependency,
 @router.delete("/{registro_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_registro(db: db_dependency, registro_id: int = Path(gt=0)):
     registro_model = db.query(Registros).filter(
-        Registros.id == registro_id).first()
+        Registros.id == registro_id
+        ).first()
 
     if registro_model is None:
         raise HTTPException(status_code=404, detail='Registro not found.')

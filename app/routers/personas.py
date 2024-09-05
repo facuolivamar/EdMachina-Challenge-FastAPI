@@ -26,11 +26,15 @@ db_dependency = Annotated[Session, Depends(get_db)]
 
 
 class PersonaRequest(BaseModel):
-    nombre_persona: str = Field(min_length=1, description="nombre de la Persona")
-    apellido_persona: str = Field(min_length=1, description="apellido de la Persona")
-    email_persona: str = Field(min_length=3, description="email de la Persona")
-    numero_dni_persona: int = Field(gt=0, description="numero de DNI de la Persona")
-    anio_nacimiento_persona: date = Field(description="Fecha de Nacimiento de la Persona")
+    nombre_persona: str = Field(min_length=1,
+                                description="Nombre de la Persona")
+    apellido_persona: str = Field(min_length=1,
+                                  description="Apellido de la Persona")
+    email_persona: str = Field(min_length=3,
+                               description="Email de la Persona")
+    numero_dni_persona: int = Field(gt=0,
+                                    description="Numero de DNI de la Persona")
+    fecha_nacimiento_persona: date = Field(description="Fecha de Nacimiento de la Persona")
 
 
 @router.get("", status_code=status.HTTP_200_OK)
@@ -49,19 +53,23 @@ async def read_persona(db: db_dependency, persona_id: int = Path(gt=0)):
 @router.post("", status_code=status.HTTP_201_CREATED)
 async def create_persona(db: db_dependency, persona_request: PersonaRequest):
     persona_model = Personas(**persona_request.model_dump())
-    
+
     try:
         db.add(persona_model)
         db.commit()
         return persona_model
     except IntegrityError as e:
         db.rollback()
-        
-        email_personas = db.query(Personas).filter(Personas.email_persona == persona_model.email_persona).first()
+
+        email_personas = db.query(Personas).filter(
+            Personas.email_persona == persona_request.email_persona
+            ).first()
         if email_personas is not None:
             raise HTTPException(status_code=422, detail='email already exists.')
-        
-        numero_dni_personas = db.query(Personas).filter(Personas.numero_dni_persona == persona_model.numero_dni_persona).first()
+
+        numero_dni_personas = db.query(Personas).filter(
+            Personas.numero_dni_persona == persona_request.numero_dni_persona
+            ).first()
         if numero_dni_personas is not None:
             raise HTTPException(status_code=422, detail='numero_dni_persona already exists.')
 
@@ -84,7 +92,7 @@ async def update_persona(db: db_dependency,
     persona_model.apellido_persona = persona_request.apellido_persona
     persona_model.email_persona = persona_request.email_persona
     persona_model.numero_dni_persona = persona_request.numero_dni_persona
-    persona_model.anio_nacimiento_persona = persona_request.anio_nacimiento_persona
+    persona_model.fecha_nacimiento_persona = persona_request.fecha_nacimiento_persona
 
     try:
         db.add(persona_model)
@@ -92,12 +100,16 @@ async def update_persona(db: db_dependency,
         return persona_model
     except IntegrityError as e:
         db.rollback()
-        
-        email_personas = db.query(Personas).filter(Personas.email_persona == persona_request.email_persona).first()
+
+        email_personas = db.query(Personas).filter(
+            Personas.email_persona == persona_request.email_persona
+            ).first()
         if email_personas is not None and email_personas.id != persona_id:
             raise HTTPException(status_code=422, detail='email already exists.')
         
-        numero_dni_personas = db.query(Personas).filter(Personas.numero_dni_persona == persona_model.numero_dni_persona).first()
+        numero_dni_personas = db.query(Personas).filter(
+            Personas.numero_dni_persona == persona_request.numero_dni_persona
+            ).first()
         if numero_dni_personas is not None and numero_dni_personas.id != persona_id:
             raise HTTPException(status_code=422, detail='numero_dni_persona already exists.')
 
@@ -106,7 +118,6 @@ async def update_persona(db: db_dependency,
     except SQLAlchemyError:
         db.rollback()
         raise HTTPException(status_code=500, detail="Internal Server Error")
-
 
 
 @router.delete("/{persona_id}", status_code=status.HTTP_204_NO_CONTENT)

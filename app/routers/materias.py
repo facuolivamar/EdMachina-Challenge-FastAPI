@@ -25,8 +25,9 @@ db_dependency = Annotated[Session, Depends(get_db)]
 
 
 class MateriaRequest(BaseModel):
-    nombre_materia: str = Field(min_length=1, description="Este es el nombre de la Materia")
-    anio_materia: int = Field(gt=0, description="Este es el año de cursado de la Materia, ejemplo: 5 para 5to año.")
+    nombre_materia: str = Field(min_length=1, description="Nombre de la Materia")
+    anio_materia: int = Field(gt=0,
+                              description="Año de cursado de la Materia, ejemplo: 5 para 5to año.")
     carrera_id: int = Field(gt=0, description="Carrera relacionada a la Materia")
 
 
@@ -53,8 +54,10 @@ async def create_materia(db: db_dependency, materia_request: MateriaRequest):
         return materia_model
     except IntegrityError as e:
         db.rollback()
-        
-        carrera_id = db.query(Carreras).filter(id == materia_model.carrera_id).first()
+
+        carrera_id = db.query(Carreras).filter(
+            id == materia_request.carrera_id
+            ).first()
         if carrera_id is None:
             raise HTTPException(status_code=422, detail='carrera_id does not exist.')
 
@@ -63,7 +66,6 @@ async def create_materia(db: db_dependency, materia_request: MateriaRequest):
     except SQLAlchemyError:
         db.rollback()
         raise HTTPException(status_code=500, detail="Internal Server Error")
-        
 
 
 @router.put("/{materia_id}", status_code=status.HTTP_204_NO_CONTENT)
@@ -84,8 +86,10 @@ async def update_materia(db: db_dependency,
         return materia_model
     except IntegrityError as e:
         db.rollback()
-        
-        carrera_id = db.query(Carreras).filter(id == materia_model.carrera_id).first()
+
+        carrera_id = db.query(Carreras).filter(
+            id == materia_request.carrera_id
+            ).first()
         if carrera_id is None:
             raise HTTPException(status_code=422, detail='carrera_id does not exist.')
 
