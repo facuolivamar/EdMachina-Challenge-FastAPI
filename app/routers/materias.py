@@ -1,11 +1,12 @@
-from pydantic import BaseModel, Field
 from fastapi import APIRouter, Path, Depends, HTTPException
 from starlette import status
 from ..database import SessionLocal
 from typing import Annotated
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
-from ..models import Materias, Carreras
+from ..models.materias import Materias
+from ..models.carreras import Carreras
+from ..schemas.materias import MateriaRequest
 
 router = APIRouter(
     prefix='/materia',
@@ -22,13 +23,6 @@ def get_db():
 
 
 db_dependency = Annotated[Session, Depends(get_db)]
-
-
-class MateriaRequest(BaseModel):
-    nombre_materia: str = Field(min_length=1, description="Nombre de la Materia")
-    anio_materia: int = Field(gt=0,
-                              description="Año de cursado de la Materia, ejemplo: 5 para 5to año.")
-    carrera_id: int = Field(gt=0, description="Carrera relacionada a la Materia")
 
 
 @router.get("", status_code=status.HTTP_200_OK)

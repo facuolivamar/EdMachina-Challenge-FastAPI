@@ -1,12 +1,11 @@
-from pydantic import BaseModel, Field
 from fastapi import APIRouter, Path, Depends, HTTPException
 from starlette import status
 from ..database import SessionLocal
 from typing import Annotated
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
-from ..models import Personas
-from datetime import date
+from ..models.personas import Personas
+from ..schemas.personas import PersonaRequest
 
 router = APIRouter(
     prefix='/persona',
@@ -23,18 +22,6 @@ def get_db():
 
 
 db_dependency = Annotated[Session, Depends(get_db)]
-
-
-class PersonaRequest(BaseModel):
-    nombre_persona: str = Field(min_length=1,
-                                description="Nombre de la Persona")
-    apellido_persona: str = Field(min_length=1,
-                                  description="Apellido de la Persona")
-    email_persona: str = Field(min_length=3,
-                               description="Email de la Persona")
-    numero_dni_persona: int = Field(gt=0,
-                                    description="Numero de DNI de la Persona")
-    fecha_nacimiento_persona: date = Field(description="Fecha de Nacimiento de la Persona")
 
 
 @router.get("", status_code=status.HTTP_200_OK)
@@ -106,7 +93,7 @@ async def update_persona(db: db_dependency,
             ).first()
         if email_personas is not None and email_personas.id != persona_id:
             raise HTTPException(status_code=422, detail='email already exists.')
-        
+
         numero_dni_personas = db.query(Personas).filter(
             Personas.numero_dni_persona == persona_request.numero_dni_persona
             ).first()
