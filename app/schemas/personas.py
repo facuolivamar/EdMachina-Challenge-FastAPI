@@ -12,3 +12,9 @@ class PersonaRequest(BaseModel):
     numero_dni_persona: int = Field(gt=0,
                                     description="Numero de DNI de la Persona")
     fecha_nacimiento_persona: date = Field(description="Fecha de Nacimiento de la Persona")
+    direccion_persona: str = Field(min_length=1,
+                                description="Direccion de la Persona")    
+    telefono_persona: int = Field(gt=0,
+                                    description="Numero de Telefono de la Persona")
+    anio_inscripcion_persona: int = Field(gt=0,
+                                    description="Año de Inscripcion de la Persona")
