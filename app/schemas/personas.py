@@ -1,7 +1,7 @@
 from pydantic import BaseModel, Field
 from datetime import date
 
-
+# Modelo Pydantic que define la estructura esperada para las requests relacionadas con Personas
 class PersonaRequest(BaseModel):
     nombre_persona: str = Field(min_length=1,
                                 description="Nombre de la Persona")

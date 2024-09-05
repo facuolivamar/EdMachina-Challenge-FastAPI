@@ -1,7 +1,7 @@
 from pydantic import BaseModel, Field
 from datetime import date
 
-
+# Modelo Pydantic que define la estructura esperada para las requests relacionadas con Registros
 class RegistroRequest(BaseModel):
     calificacion_final: float = Field(gt=0, le=10, description="Calificacion final del Alumno")
     fecha_inicio_cursado: date = Field(description="Fecha de Inicio de Cursado de la Materia")
