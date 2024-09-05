@@ -10,7 +10,7 @@ entity Personas {
     apellido_persona: str
     email_persona: str
     numero_dni_persona: int
-    anio_nacimiento_persona: int
+    fecha_nacimiento_persona: int
     --
     --
     METHOD(get_personas())
