@@ -8,7 +8,7 @@ class Registros(Base):
     __tablename__ = 'registros'
 
     id = Column(Integer, primary_key=True, index=True)
-    calificacion_final = Column(Float, nullable=False)
+    calificacion_final = Column(Float, nullable=True)
     fecha_inicio_cursado = Column(Date, nullable=False)
     fecha_fin_cursado = Column(Date, default=None)
     activo = Column(Boolean, default=True)
@@ -19,7 +19,11 @@ class Registros(Base):
     persona_id = Column(Integer,
                         ForeignKey("personas.id", ondelete='CASCADE'),
                         nullable=False)
+    carrera_id = Column(Integer,
+                        ForeignKey("carreras.id", ondelete='CASCADE'),
+                        nullable=False)
 
     # Relaciones
     persona = relationship("Personas", backref="registros")  # Relación con el modelo Personas (una persona tiene muchos registros)
     materia = relationship("Materias", backref="registros")  # Relación con el modelo Materias (una materia tiene muchos registros)
+    carrera = relationship("Carreras", backref="registros")  # Relación con el modelo Carreras (una carrera tiene muchos registros)

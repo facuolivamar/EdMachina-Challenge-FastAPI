@@ -11,3 +11,6 @@ class Personas(Base):
     email_persona = Column(String(length=255), unique=True, nullable=False)
     numero_dni_persona = Column(Integer, unique=True, nullable=False)
     fecha_nacimiento_persona = Column(Date, nullable=True)
+    direccion_persona = Column(String(length=255), nullable=False)
+    telefono_persona = Column(Integer, nullable=False)
+    anio_inscripcion_persona = Column(Integer, nullable=False)
