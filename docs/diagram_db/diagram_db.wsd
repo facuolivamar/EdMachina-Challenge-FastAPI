@@ -10,7 +10,10 @@ entity Personas {
     apellido_persona: str
     email_persona: str
     numero_dni_persona: int
-    fecha_nacimiento_persona: int
+    fecha_nacimiento_persona: date
+    direccion_persona: str
+    telefono_persona: int
+    anio_inscripcion_persona: date_year
     --
     --
     METHOD(get_personas())
@@ -26,7 +29,6 @@ entity Materias {
     nombre_materia: str
     anio_materia: int
     --
-    FOREIGN_KEY(Carreras)
     --
     METHOD(get_materias())
     METHOD(get_materia())
@@ -38,13 +40,14 @@ entity Materias {
 entity Registros {
     + PRIMARY_KEY(id): int
     --
-    calificacion_final: float
+    calificacion_final: float | null
     fecha_inicio_cursado: date
-    fecha_fin_cursado: date
+    fecha_fin_cursado: date | null
     activo: bool
     --
     FOREIGN_KEY(Personas)
     FOREIGN_KEY(Materias)
+    FOREIGN_KEY(Carreras)
     --
     METHOD(get_Registros())
     METHOD(get_Registros_detalle())
@@ -66,7 +69,7 @@ entity Carreras {
     METHOD(del_Carrera())
 }
 
-Carreras "1" - "*" Materias
+Carreras "1" -- "*" Registros
 Materias "1" - "*" Registros
 Registros "*" - "1" Personas
 
