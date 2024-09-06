@@ -30,7 +30,7 @@ document.addEventListener('DOMContentLoaded', function() {
         };
 
         // Send data to API
-        fetch('http://127.0.0.1:8000/registro', {
+        fetch('http://localhost:8080/registro', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -78,7 +78,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function fetchDropdownData(endpoint, selectElement, formatOption) {
-        fetch(`http://127.0.0.1:8000/${endpoint}`)
+        fetch(`http://localhost:8080/${endpoint}`)
             .then(response => response.json())
             .then(data => {
                 data.forEach(item => {

@@ -1,0 +1,40 @@
+version: '3.9'
+
+services:
+  leadsapp-postgres:
+    image: "postgres:9.6-alpine"
+    container_name: leadsapp-postgres
+    volumes:
+      - leadsapp-data:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_DB=leadsapp
+      - POSTGRES_USER=leadsapp
+      - POSTGRES_PASSWORD=leadsapp
+
+  leadsapp-app:
+    build: ./app
+    container_name: leadsapp-app
+    environment:
+      - DB_SERVER=leadsapp-postgres
+      - POSTGRES_DB=leadsapp
+      - POSTGRES_USER=leadsapp
+      - POSTGRES_PASSWORD=leadsapp
+    ports:
+      - 8080:8080
+    depends_on:
+      - leadsapp-postgres
+    env_file:
+      - .env
+
+  leadsapp-ui:
+    build: ./frontend
+    container_name: leadsapp-ui
+    ports:
+      - 4200:80
+    depends_on:
+      - leadsapp-app
+
+volumes:
+  leadsapp-data:
