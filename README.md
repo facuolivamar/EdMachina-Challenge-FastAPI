@@ -8,7 +8,7 @@ Este repositorio contiene el proyecto FastAPI desarrollado para el Ed Machina Ch
 - **Base de datos**: PostgreSQL 9.6
 - **Frontend**: HTML, CSS, JavaScript
 - **ORM**: SQLAlchemy
-- **Pydantic**: Requests schemas
+- **Pydantic**: Esquemas de requests
 - **Migraciones de la base de datos**: Alembic
 - **Contenedores**: Docker y Docker Compose
 - **Testing**: Postman
@@ -35,7 +35,7 @@ Este repositorio contiene el proyecto FastAPI desarrollado para el Ed Machina Ch
 
 3. **Acceder a la aplicación**:
 
-   - **API FastAPI**: [http://localhost:8000/docs](http://localhost:8000/docs)
+   - **API FastAPI**: [http://localhost:8080/docs](http://localhost:8080/docs)
    - **Frontend UI**: [http://localhost:4200](http://localhost:4200)
 
 ### 2. Inicialización sin Docker
@@ -109,7 +109,7 @@ Para insertar datos en la base de datos, puedes utilizar el script `inserts.sql`
 - **Registros**:
   - `GET /registro`: Obtener todos los registros de cursado.
   - `GET /registro/{id}`: Obtener un registro por ID.
-  - `GET /registro/detalle/{id}`: Obtener un registro por ID.
+  - `GET /registro/detalle/{id}`: Obtener un detalle de registro por ID.
   - `POST /registro`: Crear un nuevo registro de cursado.
   - `PUT /registro/{id}`: Actualizar un registro.
   - `DELETE /registro/{id}`: Eliminar un registro.
