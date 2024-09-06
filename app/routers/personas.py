@@ -1,11 +1,11 @@
 from fastapi import APIRouter, Path, Depends, HTTPException
 from starlette import status
-from ..database import SessionLocal
+from database import SessionLocal
 from typing import Annotated
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
-from ..models.personas import Personas
-from ..schemas.personas import PersonaRequest
+from models.personas import Personas
+from schemas.personas import PersonaRequest
 
 router = APIRouter(
     prefix='/persona',

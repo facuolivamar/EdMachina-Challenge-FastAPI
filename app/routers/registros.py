@@ -1,14 +1,14 @@
 from fastapi import APIRouter, Path, Depends, HTTPException
 from starlette import status
-from ..database import SessionLocal
+from database import SessionLocal
 from typing import Annotated
 from sqlalchemy.orm import Session, joinedload
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
-from ..models.registros import Registros
-from ..models.materias import Materias
-from ..models.personas import Personas
-from ..models.carreras import Carreras
-from ..schemas.registros import RegistroRequest
+from models.registros import Registros
+from models.materias import Materias
+from models.personas import Personas
+from models.carreras import Carreras
+from schemas.registros import RegistroRequest
 
 # Definimos un router para el manejo de las rutas relacionadas con los "registros"
 router = APIRouter(

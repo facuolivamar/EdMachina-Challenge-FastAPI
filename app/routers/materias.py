@@ -1,11 +1,11 @@
 from fastapi import APIRouter, Path, Depends, HTTPException
 from starlette import status
-from ..database import SessionLocal
+from database import SessionLocal
 from typing import Annotated
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
-from ..models.materias import Materias
-from ..schemas.materias import MateriaRequest
+from models.materias import Materias
+from schemas.materias import MateriaRequest
 
 router = APIRouter(
     prefix='/materia',

@@ -1,10 +1,10 @@
 from fastapi import APIRouter, Path, Depends, HTTPException
 from starlette import status
-from ..database import SessionLocal
+from database import SessionLocal
 from typing import Annotated
 from sqlalchemy.orm import Session
-from ..models.carreras import Carreras
-from ..schemas.carreras import CarreraRequest
+from models.carreras import Carreras
+from schemas.carreras import CarreraRequest
 
 router = APIRouter(
     prefix='/carrera',

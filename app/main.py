@@ -1,9 +1,19 @@
 from fastapi import FastAPI
-from .database import engine, Base
-from .routers import carreras, personas, materias, registros
+from database import engine, Base
+from routers import carreras, personas, materias, registros
+from fastapi.middleware.cors import CORSMiddleware
 
 # Crear una instancia de la aplicación FastAPI
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:4200", "http://localhost:5500"],  # Aquí colocas la URL de tu frontend
+    allow_credentials=True,
+    allow_methods=["*"],  # Permitir todos los métodos HTTP (GET, POST, etc.)
+    allow_headers=["*"],  # Permitir todos los encabezados
+)
+
 
 # Crear las tablas en la base de datos usando SQLAlchemy y el engine conectado
 # Si las tablas ya existen, no se modifican
