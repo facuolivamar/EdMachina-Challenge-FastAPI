@@ -24,6 +24,6 @@ class Registros(Base):
                         nullable=False)
 
     # Relaciones
-    persona = relationship("Personas", backref="registros")  # Relación con el modelo Personas (una persona tiene muchos registros)
-    materia = relationship("Materias", backref="registros")  # Relación con el modelo Materias (una materia tiene muchos registros)
-    carrera = relationship("Carreras", backref="registros")  # Relación con el modelo Carreras (una carrera tiene muchos registros)
+    persona = relationship("Personas", backref="registros")  # 1 persona tiene n registros
+    materia = relationship("Materias", backref="registros")  # 1 materia tiene n registros
+    carrera = relationship("Carreras", backref="registros")  # 1 carrera tiene n registros
