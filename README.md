@@ -1,59 +1,59 @@
 # EdMachina Challenge - FastAPI
 
-Este repositorio contiene el proyecto FastAPI desarrollado para el Ed Machina Challenge.
+This repository contains the FastAPI project developed for the **EdMachina Challenge**.
 
-## Tecnologías utilizadas
+## Technologies Used
 
 - **Backend**: FastAPI
-- **Base de datos**: PostgreSQL 9.6
+- **Database**: PostgreSQL 9.6
 - **Frontend**: HTML, CSS, JavaScript
 - **ORM**: SQLAlchemy
-- **Pydantic**: Esquemas de requests
-- **Migraciones de la base de datos**: Alembic
-- **Contenedores**: Docker y Docker Compose
+- **Request Schemas**: Pydantic
+- **Database Migrations**: Alembic
+- **Containers**: Docker and Docker Compose
 - **Testing**: Postman
-- **Diagramación de la base de datos**: PlantUML - DER
+- **Database Diagram**: PlantUML (ERD)
 
-## Instalación y ejecución
+## Installation and Execution
 
-### 1. Inicialización con Docker
+### 1. Initialization with Docker
 
-#### Pasos:
+#### Steps:
 
-1. **Clonar el repositorio**:
+1. **Clone the repository**:
 
    ```bash
-   git clone https://github.com/tu-usuario/EdMachina-Challenge-FastAPI.git
+   git clone https://github.com/your-username/EdMachina-Challenge-FastAPI.git
    cd EdMachina-Challenge-FastAPI
    ```
 
-2. **Levantar la aplicación con Docker Compose**:
+2. **Start the application with Docker Compose**:
 
    ```bash
    docker-compose up --build
    ```
 
-3. **Acceder a la aplicación**:
+3. **Access the application**:
 
-   - **API FastAPI**: [http://localhost:8080/docs](http://localhost:8080/docs)
+   - **FastAPI API**: [http://localhost:8080/docs](http://localhost:8080/docs)
    - **Frontend UI**: [http://localhost:4200](http://localhost:4200)
 
-### 2. Inicialización sin Docker
+### 2. Initialization without Docker
 
 #### Backend (FastAPI):
 
-1. **Instalar las dependencias**:
+1. **Install dependencies**:
 
-   Asegúrate de estar en el directorio /app del proyecto y luego ejecuta:
+   Ensure you are in the `/app` directory of the project, then run:
 
    ```bash
    pipenv shell
    pip install -r requirements.txt
    ```
 
-2. **Configurar PostgreSQL**:
+2. **Configure PostgreSQL**:
 
-   Configura una base de datos PostgreSQL y actualiza las credenciales en un archivo `.env` con el formato:
+   Set up a PostgreSQL database and update the credentials in a `.env` file with the following format:
 
    ```bash
    POSTGRES_DB=leadsapp
@@ -61,80 +61,81 @@ Este repositorio contiene el proyecto FastAPI desarrollado para el Ed Machina Ch
    POSTGRES_PASSWORD=leadsapp
    ```
 
-3. **Levantar el servidor FastAPI**:
+3. **Start the FastAPI server**:
 
    ```bash
    uvicorn main:app --reload --port 8080
    ```
 
-4. **Acceder a la API**: [http://localhost:8080/docs](http://localhost:8080/docs)
+4. **Access the API**: [http://localhost:8080/docs](http://localhost:8080/docs)
 
 #### Frontend:
 
-1. **Navegar al directorio `frontend/`**:
+1. **Navigate to the `frontend/` directory**:
 
    ```bash
    cd frontend
    ```
 
-2. **Abrir el archivo `index.html` en tu navegador o utilizar un servidor local como `Live Server` en VSCode**.
+2. **Open the `index.html` file in your browser** or use a local server like `Live Server` in VSCode.
 
-## Base de datos
+## Database
 
-### Diagrama de la base de datos
+### Database Diagram
 
-![Diagrama de la Base de Datos](https://github.com/facuolivamar/EdMachina-Challenge-FastAPI/blob/main/docs/diagram_db/diagram_db.png)
+![Database Diagram](https://github.com/facuolivamar/EdMachina-Challenge-FastAPI/blob/main/docs/diagram_db/diagram_db.png)
 
-### Inserción de datos en la base de datos
+### Inserting Data into the Database
 
-Para insertar datos en la base de datos, puedes utilizar el script `inserts.sql` ubicado en el directorio `postgresql_scripts/`:
+To insert data into the database, you can use the `inserts.sql` script located in the `postgresql_scripts/` directory.
 
 ## Endpoints
-### Rutas disponibles:
+
+### Available Routes:
 
 - **Personas**:
-  - `GET /persona`: Obtener todas las personas.
-  - `GET /persona/{id}`: Obtener una persona por ID.
-  - `POST /persona`: Crear una nueva persona.
-  - `PUT /persona/{id}`: Actualizar los datos de una persona.
-  - `DELETE /persona/{id}`: Eliminar una persona.
+  - `GET /persona`: Retrieve all personas.
+  - `GET /persona/{id}`: Retrieve a persona by ID.
+  - `POST /persona`: Create a new persona.
+  - `PUT /persona/{id}`: Update a persona's information.
+  - `DELETE /persona/{id}`: Delete a persona.
 
 - **Materias**:
-  - `GET /materia`: Obtener todas las materias.
-  - `GET /materia/{id}`: Obtener una materia por ID.
-  - `POST /materia`: Crear una nueva materia.
-  - `PUT /materia/{id}`: Actualizar una materia.
-  - `DELETE /materia/{id}`: Eliminar una materia.
+  - `GET /materia`: Retrieve all materias.
+  - `GET /materia/{id}`: Retrieve a materia by ID.
+  - `POST /materia`: Create a new materia.
+  - `PUT /materia/{id}`: Update a materia's information.
+  - `DELETE /materia/{id}`: Delete a materia.
 
 - **Registros**:
-  - `GET /registro`: Obtener todos los registros de cursado.
-  - `GET /registro/{id}`: Obtener un registro por ID.
-  - `GET /registro/detalle/{id}`: Obtener un detalle de registro por ID.
-  - `POST /registro`: Crear un nuevo registro de cursado.
-  - `PUT /registro/{id}`: Actualizar un registro.
-  - `DELETE /registro/{id}`: Eliminar un registro.
+  - `GET /registro`: Retrieve all registros.
+  - `GET /registro/{id}`: Retrieve a registro by ID.
+  - `GET /registro/detalle/{id}`: Retrieve detailed information about a registro by ID.
+  - `POST /registro`: Create a new registro.
+  - `PUT /registro/{id}`: Update a registro's information.
+  - `DELETE /registro/{id}`: Delete a registro.
 
 - **Carreras**:
-  - `GET /carrera`: Obtener todas las carreras.
-  - `GET /carrera/{id}`: Obtener una carrera por ID.
-  - `POST /carrera`: Crear una nueva carrera.
-  - `PUT /carrera/{id}`: Actualizar una carrera.
-  - `DELETE /carrera/{id}`: Eliminar una carrera.
+  - `GET /carrera`: Retrieve all carreras.
+  - `GET /carrera/{id}`: Retrieve a carrera by ID.
+  - `POST /carrera`: Create a new carrera.
+  - `PUT /carrera/{id}`: Update a carrera's information.
+  - `DELETE /carrera/{id}`: Delete a carrera.
 
-## Testing con Postman
+## Testing with Postman
 
-Para realizar pruebas de la API, utiliza la colección de Postman proporcionada:
+To test the API, use the provided Postman collection:
 
 - **Postman Collection**: [Challenge FastAPI - EdMachina](https://www.postman.com/salascuna-system/workspace/challenge-fastapi-edmachina/overview)
 
-### Paquetes principales:
+### Main Packages:
 
-- **FastAPI**: Framework web para el backend.
-- **SQLAlchemy**: ORM utilizado para la interacción con la base de datos.
-- **Alembic**: Manejo de migraciones de la base de datos.
-- **Psycopg2**: Adaptador de PostgreSQL para Python.
-- **Uvicorn**: Servidor ASGI para ejecutar FastAPI.
+- **FastAPI**: Web framework for the backend.
+- **SQLAlchemy**: ORM used to interact with the database.
+- **Alembic**: Database migration tool.
+- **Psycopg2**: PostgreSQL adapter for Python.
+- **Uvicorn**: ASGI server for running FastAPI.
 
-## Licencia
+## License
 
-Este proyecto está bajo la licencia MIT. 
+This project is licensed under the MIT License. 
