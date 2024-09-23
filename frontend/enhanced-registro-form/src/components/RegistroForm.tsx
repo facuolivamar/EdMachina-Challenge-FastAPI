@@ -116,9 +116,35 @@ const RegistroForm: React.FC = () => {
       setShowMateriaForm(false);
       setShowCarreraForm(false);
       fetchData();
-    } catch (error) {
-      message.error('Failed to create Registro');
+    } catch (error: any) {
+    // Captura de error
+    if (error.response && error.response.status === 422) {
+      const errorMessage = error.response.data.detail;
+     
+      message.error(errorMessage);
+
+      // Opcional: Si hay campos específicos que han causado el error, se pueden marcar como errores en el formulario.
+      if (errorMessage.includes('email')) {
+        form.setFields([
+          {
+            name: ['persona', 'email_persona'],
+            errors: [errorMessage], // Mostrar el mensaje exacto del backend
+          },
+        ]);
+      }
+      if (errorMessage.includes('numero_dni_persona')) {
+        form.setFields([
+          {
+            name: ['persona', 'numero_dni_persona'],
+            errors: [errorMessage], // Mostrar el mensaje exacto del backend
+          },
+        ]);
+      }
+      // Agrega más condiciones si el backend devuelve otros mensajes específicos
+    } else {
+      message.error('Error en la solicitud. Inténtalo de nuevo.');
     }
+  }
   };
 
   return (
@@ -126,9 +152,8 @@ const RegistroForm: React.FC = () => {
       <Form.Item
         name="calificacion_final"
         label="Calificación Final"
-        rules={[{ min: 0, max: 10 }]}
       >
-        <Input type="number" step="0.1" />
+        <Input type="number" step="0.1" min={0.1} max={10}/>
       </Form.Item>
 
       <Form.Item
@@ -181,7 +206,7 @@ const RegistroForm: React.FC = () => {
             <Input placeholder="Email" />
           </Form.Item>
           <Form.Item name={['persona', 'numero_dni_persona']} rules={[{ required: true, min: 1 }]}>
-            <Input type="number" placeholder="DNI" />
+            <Input type="number" min={1} placeholder="DNI" />
           </Form.Item>
           <Form.Item name={['persona', 'fecha_nacimiento_persona']} rules={[{ required: true }]}>
             <DatePicker placeholder="Fecha de Nacimiento" />
@@ -190,10 +215,10 @@ const RegistroForm: React.FC = () => {
             <Input placeholder="Dirección" />
           </Form.Item>
           <Form.Item name={['persona', 'telefono_persona']} rules={[{ required: true, min: 1 }]}>
-            <Input type="number" placeholder="Teléfono" />
+            <Input type="number" min={1} placeholder="Teléfono" />
           </Form.Item>
           <Form.Item name={['persona', 'anio_inscripcion_persona']} rules={[{ required: true, min: 1 }]}>
-            <Input type="number" placeholder="Año de Inscripción" />
+            <Input type="number" min={1} placeholder="Año de Inscripción" />
           </Form.Item>
           <Form.Item>
             <Button type="link" onClick={() => setShowPersonaForm(false)}>
@@ -230,11 +255,11 @@ const RegistroForm: React.FC = () => {
 
       {showMateriaForm && (
         <Form.Item label="New Materia">
-          <Form.Item name={['materia', 'nombre_materia']} rules={[{ required: true, min: 1 }]}>
+          <Form.Item name={['materia', 'nombre_materia']} rules={[{ required: true}]}>
             <Input placeholder="Nombre de Materia" />
           </Form.Item>
-          <Form.Item name={['materia', 'anio_materia']} rules={[{ required: true, min: 1 }]}>
-            <Input type="number" placeholder="Año de Materia" />
+          <Form.Item name={['materia', 'anio_materia']} rules={[{ required: true }]}>
+            <Input type="number" step="1" min={1} placeholder="Año de Materia" />
           </Form.Item>
           <Form.Item>
             <Button type="link" onClick={() => setShowMateriaForm(false)}>
