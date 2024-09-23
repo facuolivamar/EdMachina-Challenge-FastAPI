@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import { Button, Form, Select, Input, DatePicker, Checkbox, message } from 'antd';
-import axios from 'axios';
+import React, { useState, useEffect } from 'react'; // Import React and necessary hooks (useState, useEffect)
+import { Button, Form, Select, Input, DatePicker, Checkbox, message } from 'antd'; // Import Ant Design components
+import axios from 'axios'; // Import Axios for HTTP requests
 
-const { Option } = Select;
+const { Option } = Select; // Destructure Select's Option component for easier usage
 
+// Interfaces for the data structures
 interface Persona {
   id: number;
   nombre_persona: string;
@@ -28,14 +29,14 @@ interface Carrera {
 }
 
 const RegistroForm: React.FC = () => {
-  const [form] = Form.useForm();
+  const [form] = Form.useForm(); // Initialize Ant Design form
   const [personas, setPersonas] = useState<Persona[]>([]);
   const [materias, setMaterias] = useState<Materia[]>([]);
   const [carreras, setCarreras] = useState<Carrera[]>([]);
   const [showPersonaForm, setShowPersonaForm] = useState(false);
   const [showMateriaForm, setShowMateriaForm] = useState(false);
   const [showCarreraForm, setShowCarreraForm] = useState(false);
-  const [createdRegistro, setCreatedRegistro] = useState<number | null>(null);
+  const [createdRegistro, setCreatedRegistro] = useState<number | null>(null); // State to store the created registration ID
 
 
   useEffect(() => {
@@ -63,6 +64,7 @@ const RegistroForm: React.FC = () => {
       let materiaId = values.materia_id;
       let carreraId = values.carrera_id;
 
+      // If creating a new person, submit the person data to the API
       if (showPersonaForm) {
         const personaData = {
           ...values.persona,
@@ -72,11 +74,9 @@ const RegistroForm: React.FC = () => {
           fecha_nacimiento_persona: values.persona.fecha_nacimiento_persona.format('YYYY-MM-DD'),
         };
 
-        console.log(personaData);
         const personaRes = await axios.post('http://localhost:8000/persona', personaData);
         personaId = personaRes.data.id;
   
-        // Actualizar el valor del campo de selección
         form.setFieldsValue({ persona_id: personaId });
         setShowPersonaForm(false);
       }
@@ -85,7 +85,6 @@ const RegistroForm: React.FC = () => {
         const materiaRes = await axios.post('http://localhost:8000/materia', values.materia);
         materiaId = materiaRes.data.id;
   
-        // Actualizar el valor del campo de selección
         form.setFieldsValue({ materia_id: materiaId });
         setShowMateriaForm(false);
       }
@@ -93,12 +92,12 @@ const RegistroForm: React.FC = () => {
       if (showCarreraForm) {
         const carreraRes = await axios.post('http://localhost:8000/carrera', values.carrera);
         carreraId = carreraRes.data.id;
-  
-        // Actualizar el valor del campo de selección
+
         form.setFieldsValue({ carrera_id: carreraId });
         setShowCarreraForm(false);
       }
 
+      // Construct the registration data to be sent to the API
       const registroData = {
         ...values,
         persona_id: personaId,
@@ -109,51 +108,51 @@ const RegistroForm: React.FC = () => {
         fecha_fin_cursado: values.fecha_fin_cursado ? values.fecha_fin_cursado.format('YYYY-MM-DD') : null,
         activo: values.activo !== undefined ? values.activo : null,
       };
-      console.log("registroData: ", registroData);
 
       const registroRes = await axios.post('http://localhost:8000/registro', registroData);
       message.success('Registro creado exitosamente');
 
-      // Desplegar la información de trazabilidad
-      const registroId = registroRes.data.id;  // Suponiendo que la respuesta del POST te devuelva el ID del registro
+      // Show traceability information
+      const registroId = registroRes.data.id;
+      setCreatedRegistro(registroId);
 
-      setCreatedRegistro(registroId);  // Actualiza el estado con el ID del registro
+      // Reset form fields and refetch data
       form.resetFields();
       setShowPersonaForm(false);
       setShowMateriaForm(false);
       setShowCarreraForm(false);
       fetchData();
     } catch (error: any) {
-    // Captura de error
-    if (error.response && error.response.status === 422) {
-      const errorMessage = error.response.data.detail;
-     
-      message.error(errorMessage);
+      // Handle specific validation errors from the backend
+      if (error.response && error.response.status === 422) {
+        const errorMessage = error.response.data.detail;
+      
+        message.error(errorMessage);
 
-      // Opcional: Si hay campos específicos que han causado el error, se pueden marcar como errores en el formulario.
-      if (errorMessage.includes('email')) {
-        form.setFields([
-          {
-            name: ['persona', 'email_persona'],
-            errors: [errorMessage], // Mostrar el mensaje exacto del backend
-          },
-        ]);
-      }
-      if (errorMessage.includes('numero_dni_persona')) {
-        form.setFields([
-          {
-            name: ['persona', 'numero_dni_persona'],
-            errors: [errorMessage], // Mostrar el mensaje exacto del backend
-          },
-        ]);
-      }
-      // Agrega más condiciones si el backend devuelve otros mensajes específicos
+        // Highlight specific form fields if error relates to email or DNI
+        if (errorMessage.includes('email')) {
+          form.setFields([
+            {
+              name: ['persona', 'email_persona'],
+              errors: [errorMessage],
+            },
+          ]);
+        }
+        if (errorMessage.includes('numero_dni_persona')) {
+          form.setFields([
+            {
+              name: ['persona', 'numero_dni_persona'],
+              errors: [errorMessage],
+            },
+          ]);
+        }
     } else {
       message.error('Error en la solicitud. Inténtalo de nuevo.');
     }
   }
   };
 
+  // The return function generates the form using Ant Design components
   return (
     <Form form={form} onFinish={onFinish} layout="vertical">
       <Form.Item
