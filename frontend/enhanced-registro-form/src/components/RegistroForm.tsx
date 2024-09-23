@@ -35,6 +35,8 @@ const RegistroForm: React.FC = () => {
   const [showPersonaForm, setShowPersonaForm] = useState(false);
   const [showMateriaForm, setShowMateriaForm] = useState(false);
   const [showCarreraForm, setShowCarreraForm] = useState(false);
+  const [createdRegistro, setCreatedRegistro] = useState<number | null>(null);
+
 
   useEffect(() => {
     fetchData();
@@ -109,8 +111,13 @@ const RegistroForm: React.FC = () => {
       };
       console.log("registroData: ", registroData);
 
-      await axios.post('http://localhost:8000/registro', registroData);
-      message.success('Registro created successfully');
+      const registroRes = await axios.post('http://localhost:8000/registro', registroData);
+      message.success('Registro creado exitosamente');
+
+      // Desplegar la información de trazabilidad
+      const registroId = registroRes.data.id;  // Suponiendo que la respuesta del POST te devuelva el ID del registro
+
+      setCreatedRegistro(registroId);  // Actualiza el estado con el ID del registro
       form.resetFields();
       setShowPersonaForm(false);
       setShowMateriaForm(false);
@@ -311,7 +318,37 @@ const RegistroForm: React.FC = () => {
           Submit
         </Button>
       </Form.Item>
+      {createdRegistro && (
+      <div style={{ marginTop: '20px' }}>
+        <h3>Registro creado exitosamente</h3>
+        <p>Acciones disponibles para el registro con ID: {createdRegistro}</p>
+        <ul>
+          <li>
+            <a href={`http://localhost:8000/registro/${createdRegistro}`} target="_blank" rel="noopener noreferrer">
+              Ver Registro
+            </a>
+          </li>
+          <li>
+            <a href={`http://localhost:8000/docs#/registro/update_registro_registro__registro_id__put`} target="_blank" rel="noopener noreferrer">
+              Actualizar Registro
+            </a>
+          </li>
+          <li>
+            <a href={`http://localhost:8000/docs#/registro/delete_registro_registro__registro_id__delete`} target="_blank" rel="noopener noreferrer">
+              Eliminar Registro
+            </a>
+          </li>
+          <li>
+            <a href={`http://localhost:8000/registro/detalle/${createdRegistro}`} target="_blank" rel="noopener noreferrer">
+              Ver Detalle de Registro
+            </a>
+          </li>
+        </ul>
+      </div>
+    )}
+
     </Form>
+    
   );
 };
 
