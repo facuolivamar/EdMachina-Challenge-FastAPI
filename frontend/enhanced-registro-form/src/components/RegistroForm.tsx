@@ -62,18 +62,39 @@ const RegistroForm: React.FC = () => {
       let carreraId = values.carrera_id;
 
       if (showPersonaForm) {
-        const personaRes = await axios.post('http://localhost:8000/persona', values.persona);
+        const personaData = {
+          ...values.persona,
+          telefono_persona: Number(values.persona.telefono_persona),
+          numero_dni_persona: Number(values.persona.numero_dni_persona),
+          anio_inscripcion_persona: Number(values.persona.anio_inscripcion_persona),
+          fecha_nacimiento_persona: values.persona.fecha_nacimiento_persona.format('YYYY-MM-DD'),
+        };
+
+        console.log(personaData);
+        const personaRes = await axios.post('http://localhost:8000/persona', personaData);
         personaId = personaRes.data.id;
+  
+        // Actualizar el valor del campo de selección
+        form.setFieldsValue({ persona_id: personaId });
+        setShowPersonaForm(false);
       }
 
       if (showMateriaForm) {
         const materiaRes = await axios.post('http://localhost:8000/materia', values.materia);
         materiaId = materiaRes.data.id;
+  
+        // Actualizar el valor del campo de selección
+        form.setFieldsValue({ materia_id: materiaId });
+        setShowMateriaForm(false);
       }
 
       if (showCarreraForm) {
         const carreraRes = await axios.post('http://localhost:8000/carrera', values.carrera);
         carreraId = carreraRes.data.id;
+  
+        // Actualizar el valor del campo de selección
+        form.setFieldsValue({ carrera_id: carreraId });
+        setShowCarreraForm(false);
       }
 
       const registroData = {
@@ -81,7 +102,7 @@ const RegistroForm: React.FC = () => {
         persona_id: personaId,
         materia_id: materiaId,
         carrera_id: carreraId,
-        calificacion_final: Number(values.calificacion_final), // Asegúrate de convertirlo a número
+        calificacion_final: Number(values.calificacion_final),
         fecha_inicio_cursado: values.fecha_inicio_cursado ? values.fecha_inicio_cursado.format('YYYY-MM-DD') : null,
         fecha_fin_cursado: values.fecha_fin_cursado ? values.fecha_fin_cursado.format('YYYY-MM-DD') : null,
         activo: values.activo !== undefined ? values.activo : null,
@@ -126,7 +147,8 @@ const RegistroForm: React.FC = () => {
         <Checkbox>Activo</Checkbox>
       </Form.Item>
 
-      <Form.Item name="persona_id" label="Persona" rules={[{ required: true }]}>
+      {!showPersonaForm && (
+        <Form.Item name="persona_id" label="Persona" rules={[{ required: true }]}>
         <Select
           onChange={(value) => setShowPersonaForm(value === 'new')}
           dropdownRender={(menu) => (
@@ -145,6 +167,7 @@ const RegistroForm: React.FC = () => {
           ))}
         </Select>
       </Form.Item>
+      )}
 
       {showPersonaForm && (
         <Form.Item label="New Persona">
@@ -157,7 +180,7 @@ const RegistroForm: React.FC = () => {
           <Form.Item name={['persona', 'email_persona']} rules={[{ required: true, type: 'email', min: 3 }]}>
             <Input placeholder="Email" />
           </Form.Item>
-          <Form.Item name={['persona', 'numero_dni_persona']} rules={[{ required: true, type: 'number', min: 1 }]}>
+          <Form.Item name={['persona', 'numero_dni_persona']} rules={[{ required: true, min: 1 }]}>
             <Input type="number" placeholder="DNI" />
           </Form.Item>
           <Form.Item name={['persona', 'fecha_nacimiento_persona']} rules={[{ required: true }]}>
@@ -166,34 +189,44 @@ const RegistroForm: React.FC = () => {
           <Form.Item name={['persona', 'direccion_persona']} rules={[{ required: true, min: 1 }]}>
             <Input placeholder="Dirección" />
           </Form.Item>
-          <Form.Item name={['persona', 'telefono_persona']} rules={[{ required: true, type: 'number', min: 1 }]}>
+          <Form.Item name={['persona', 'telefono_persona']} rules={[{ required: true, min: 1 }]}>
             <Input type="number" placeholder="Teléfono" />
           </Form.Item>
-          <Form.Item name={['persona', 'anio_inscripcion_persona']} rules={[{ required: true, type: 'number', min: 1 }]}>
+          <Form.Item name={['persona', 'anio_inscripcion_persona']} rules={[{ required: true, min: 1 }]}>
             <Input type="number" placeholder="Año de Inscripción" />
+          </Form.Item>
+          <Form.Item>
+            <Button type="link" onClick={() => setShowPersonaForm(false)}>
+              Cancelar
+            </Button>
           </Form.Item>
         </Form.Item>
       )}
 
-      <Form.Item name="materia_id" label="Materia" rules={[{ required: true }]}>
-        <Select
-          onChange={(value) => setShowMateriaForm(value === 'new')}
-          dropdownRender={(menu) => (
-            <>
-              {menu}
-              <Button type="link" onClick={() => setShowMateriaForm(true)}>
-                Add New Materia
-              </Button>
-            </>
-          )}
+      {!showMateriaForm && (<Form.Item
+        name="materia_id"
+        label="Materia"
+        rules={[{ required: !showMateriaForm }]} // Deshabilitar validación si se está creando una nueva materia
         >
-          {materias.map((materia) => (
-            <Option key={materia.id} value={materia.id}>
-              {`${materia.nombre_materia} (Year: ${materia.anio_materia})`}
-            </Option>
-          ))}
-        </Select>
-      </Form.Item>
+          <Select
+            onChange={(value) => setShowMateriaForm(value === 'new')}
+            dropdownRender={(menu) => (
+              <>
+                {menu}
+                <Button type="link" onClick={() => setShowMateriaForm(true)}>
+                  Add New Materia
+                </Button>
+              </>
+            )}
+          >
+            {materias.map((materia) => (
+              <Option key={materia.id} value={materia.id}>
+                {`${materia.nombre_materia} (Year: ${materia.anio_materia})`}
+              </Option>
+            ))}
+          </Select>
+        </Form.Item>
+      )}
 
       {showMateriaForm && (
         <Form.Item label="New Materia">
@@ -203,33 +236,47 @@ const RegistroForm: React.FC = () => {
           <Form.Item name={['materia', 'anio_materia']} rules={[{ required: true, min: 1 }]}>
             <Input type="number" placeholder="Año de Materia" />
           </Form.Item>
+          <Form.Item>
+            <Button type="link" onClick={() => setShowMateriaForm(false)}>
+              Cancelar
+            </Button>
+          </Form.Item>
+
         </Form.Item>
+        
       )}
 
-      <Form.Item name="carrera_id" label="Carrera" rules={[{ required: true }]}>
-        <Select
-          onChange={(value) => setShowCarreraForm(value === 'new')}
-          dropdownRender={(menu) => (
-            <>
-              {menu}
-              <Button type="link" onClick={() => setShowCarreraForm(true)}>
-                Add New Carrera
-              </Button>
-            </>
-          )}
-        >
-          {carreras.map((carrera) => (
-            <Option key={carrera.id} value={carrera.id}>
-              {carrera.nombre_carrera}
-            </Option>
-          ))}
-        </Select>
-      </Form.Item>
+      {!showCarreraForm && (
+        <Form.Item name="carrera_id" label="Carrera" rules={[{ required: !showCarreraForm }]}>
+          <Select
+            onChange={(value) => setShowCarreraForm(value === 'new')}
+            dropdownRender={(menu) => (
+              <>
+                {menu}
+                <Button type="link" onClick={() => setShowCarreraForm(true)}>
+                  Add New Carrera
+                </Button>
+              </>
+            )}
+          >
+            {carreras.map((carrera) => (
+              <Option key={carrera.id} value={carrera.id}>
+                {carrera.nombre_carrera}
+              </Option>
+            ))}
+          </Select>
+        </Form.Item>
+      )}
 
       {showCarreraForm && (
         <Form.Item label="New Carrera">
           <Form.Item name={['carrera', 'nombre_carrera']} rules={[{ required: true, min: 1 }]}>
             <Input placeholder="Nombre de Carrera" />
+          </Form.Item>
+          <Form.Item>
+            <Button type="link" onClick={() => setShowCarreraForm(false)}>
+              Cancelar
+            </Button>
           </Form.Item>
         </Form.Item>
       )}
