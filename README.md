@@ -4,9 +4,9 @@ This repository contains the FastAPI project developed for the **EdMachina Chall
 
 ## Technologies Used
 
-- **Backend**: FastAPI
+- **Backend**: FastAPI, Python
 - **Database**: PostgreSQL 9.6
-- **Frontend**: HTML, CSS, JavaScript
+- **Frontend**: React, Ant Design, Axios, Node.js, TypeScript
 - **ORM**: SQLAlchemy
 - **Request Schemas**: Pydantic
 - **Database Migrations**: Alembic
@@ -35,8 +35,8 @@ This repository contains the FastAPI project developed for the **EdMachina Chall
 
 3. **Access the application**:
 
-   - **FastAPI API**: [http://localhost:8080/docs](http://localhost:8080/docs)
-   - **Frontend UI**: [http://localhost:4200](http://localhost:4200)
+   - **FastAPI API**: [http://localhost:8000/docs](http://localhost:8000/docs)
+   - **Frontend UI**: [http://localhost:3000](http://localhost:3000)
 
 ### 2. Initialization without Docker
 
@@ -56,18 +56,19 @@ This repository contains the FastAPI project developed for the **EdMachina Chall
    Set up a PostgreSQL database and update the credentials in a `.env` file with the following format:
 
    ```bash
-   POSTGRES_DB=leadsapp
-   POSTGRES_USER=leadsapp
-   POSTGRES_PASSWORD=leadsapp
+   POSTGRES_DB=your_postgress_db
+   POSTGRES_USER=your_postgress_user
+   POSTGRES_PASSWORD=your_postgress_app
+   DB_HOST=your_postgress_host
    ```
 
 3. **Start the FastAPI server**:
 
    ```bash
-   uvicorn main:app --reload --port 8080
+   uvicorn main:app --reload --port 8000
    ```
 
-4. **Access the API**: [http://localhost:8080/docs](http://localhost:8080/docs)
+4. **Access the API**: [http://localhost:8000/docs](http://localhost:8000/docs)
 
 #### Frontend:
 
@@ -77,7 +78,19 @@ This repository contains the FastAPI project developed for the **EdMachina Chall
    cd frontend
    ```
 
-2. **Open the `index.html` file in your browser** or use a local server like `Live Server` in VSCode.
+2. **Install dependencies**:
+
+   ```bash
+   npm install
+   ```
+
+3. **Start the React frontend**:
+
+   ```bash
+   npm start
+   ```
+
+4. **Access the Frontend UI**: [http://localhost:3000](http://localhost:3000)
 
 ## Database
 
