@@ -22,7 +22,7 @@ services:
       - POSTGRES_USER=leadsapp
       - POSTGRES_PASSWORD=leadsapp
     ports:
-      - 8080:8080
+      - 8000:8000
     depends_on:
       - leadsapp-postgres
 
@@ -30,7 +30,7 @@ services:
     build: ./frontend
     container_name: leadsapp-ui
     ports:
-      - 4200:80
+      - 3000:3000
     depends_on:
       - leadsapp-app
 
